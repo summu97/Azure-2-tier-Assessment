@@ -11,3 +11,22 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 }
+---------------------------------------------------------------------------------------------
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://my-load-balancer-1234567890.us-east-1.elb.amazonaws.com;    # Replace with your ALB DNS name.
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+
+        # Add optional health check or timeout settings
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_send_timeout 30s;
+    }
+}
