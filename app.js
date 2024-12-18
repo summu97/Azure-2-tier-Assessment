@@ -6,10 +6,10 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const dbConfig = {
-    user: "dbadmin",  					# Give your Database username
-    password: "admin@4321",				# Give your Database password
-    server: "adq-az-dbserver.database.windows.net",	# Give your SQL Server name
-    database: "adz-az-sqldatabase",			# Give your SQL Database name
+    user: "dbadmin",  					// Give your Database username
+    password: "admin@4321",				// Give your Database password
+    server: "adq-az-dbserver.database.windows.net",	 // Give your SQL Server name
+    database: "adz-az-sqldatabase",			// Give your SQL Database name
     options: {
         encrypt: true
     }
