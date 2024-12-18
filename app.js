@@ -30,6 +30,6 @@ app.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
 
-app.listen(8080, () => {				# Give the port on which you want your application to run
-    console.log("Server is running on port 8080");	# Give the port on which you want your application to run
+app.listen(8080, () => {				// Give the port on which you want your application to run
+    console.log("Server is running on port 8080");	// Give the port on which you want your application to run
 });
