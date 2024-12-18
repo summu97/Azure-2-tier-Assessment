@@ -9,8 +9,11 @@ sudo mkdir /var/www/frontend && cd /var/www/frontend
 sudo npm init -y
 sudo npm install express body-parser mssql
 
-# copy app.js to /var/www/frontend.
-copy ./app.js /var/www/frontend
+# move app.js to /var/www/frontend.
+mv ./app.js /var/www/frontend
 
-# copy index.html to /var/www/frontend.
-copy ./index.html /var/www/frontend
+# move index.html to /var/www/frontend.
+mv ./index.html /var/www/frontend
+
+# 
+cat ./inginx_configuration >> /etc/nginx/sites-available/default
