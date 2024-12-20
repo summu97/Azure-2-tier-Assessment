@@ -12,6 +12,7 @@ const dbConfig = {
     database: "TestDB",                // Your SQL Database name
     options: {
         encrypt: true                  // For Azure SQL, use encrypt: true
+        trustServerCertificate: true, // Trust the server's certificate (if self-signed)
     }
 };
 
