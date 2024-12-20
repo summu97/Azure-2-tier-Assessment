@@ -1,41 +1,53 @@
 #!/bin/bash
 
-# Update package index and install required software
-sudo apt update
-sudo apt install -y nodejs npm nginx git
+set -e
 
-# Create the frontend directory
+# Install dependencies
+sudo apt update
+sudo apt install -y curl software-properties-common nginx git
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Set up application
 sudo mkdir -p /var/www/frontend
 cd /var/www/frontend
-
-# Initialize a Node.js project
 sudo npm init -y
 sudo npm install express body-parser mssql
-
-# Clone the GitHub repository to a temporary directory
 git clone https://github.com/summu97/Azure-2-tier-Assessment.git /tmp/app_resources/
-
-# Move application files to the target directory
 sudo mv /tmp/app_resources/* /var/www/frontend/
 sudo rm -rf /tmp/app_resources
-
-# Ensure correct permissions
 sudo chown -R www-data:www-data /var/www/frontend
 sudo chmod -R 755 /var/www/frontend
 
-# Start the Node.js application
-cd /var/www/frontend
-node app.js &
+# Create systemd service
+sudo tee /etc/systemd/system/frontend.service > /dev/null <<EOL
+[Unit]
+Description=Frontend Node.js Application
+After=network.target
 
-# Set up Nginx reverse proxy (optional, configure your Nginx as needed)
+[Service]
+WorkingDirectory=/var/www/frontend
+ExecStart=/usr/bin/node app.js
+Restart=always
+User=www-data
+Group=www-data
+Environment=PORT=8080
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+sudo systemctl daemon-reload
+sudo systemctl enable frontend
+sudo systemctl start frontend
+
+# Configure Nginx
 sudo tee /etc/nginx/sites-available/default > /dev/null <<EOL
 server {
     listen 80;
-
     server_name _;
-
     location / {
-        proxy_pass http://localhost:8080; # Assuming the Node.js app runs on port 8080
+        proxy_pass http://localhost:8080;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -45,5 +57,4 @@ server {
 }
 EOL
 
-# Restart Nginx to apply changes
 sudo systemctl restart nginx
