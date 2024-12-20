@@ -16,6 +16,13 @@ sudo npm install express body-parser mssql
 git clone https://github.com/summu97/Azure-2-tier-Assessment.git /tmp/app_resources/
 sudo mv /tmp/app_resources/* /var/www/frontend/
 sudo rm -rf /tmp/app_resources
+
+# Verify required files exist
+if [[ ! -f /var/www/frontend/app.js || ! -f /var/www/frontend/index.html ]]; then
+    echo "Required files (app.js, index.html) are missing in /var/www/frontend."
+    exit 1
+fi
+
 sudo chown -R www-data:www-data /var/www/frontend
 sudo chmod -R 755 /var/www/frontend
 
@@ -46,8 +53,9 @@ sudo tee /etc/nginx/sites-available/default > /dev/null <<EOL
 server {
     listen 80;
     server_name _;
+
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://127.0.0.1:8080;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -57,4 +65,6 @@ server {
 }
 EOL
 
+# Restart Nginx to apply changes
+sudo nginx -t
 sudo systemctl restart nginx
