@@ -5,13 +5,14 @@ const sql = require("mssql");
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Database configuration
 const dbConfig = {
-    user: "sa",                       // Your Database username
-    password: "YourStrongPassword123", // Your Database password
-    server: "azureuser", // Your SQL Server name
-    database: "TestDB",                // Your SQL Database name
+    user: "sa",                       // Replace with your database username
+    password: "YourStrongPassword123", // Replace with your database password
+    server: "azureuser",               // Replace with your SQL Server name
+    database: "TestDB",                // Replace with your SQL database name
     options: {
-        encrypt: true                  // For Azure SQL, use encrypt: true
+        encrypt: true,                 // For Azure SQL, use encrypt: true
         trustServerCertificate: true, // Trust the server's certificate (if self-signed)
     }
 };
