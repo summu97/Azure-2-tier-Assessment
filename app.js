@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const dbConfig = {
     user: "sa",                       // Replace with your database username
     password: "YourStrongPassword123", // Replace with your database password
-    server: "azureuser",               // Replace with your SQL Server name
+    server: "adq-az-sqlvm",               // Replace with your SQL Server name
     database: "TestDB",                // Replace with your SQL database name
     options: {
         encrypt: true,                 // For Azure SQL, use encrypt: true
