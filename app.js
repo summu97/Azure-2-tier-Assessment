@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const dbConfig = {
     user: "sa",                       // Your Database username
     password: "YourStrongPassword123", // Your Database password
-    server: "azureuser.internal.cloudapp.net", // Your SQL Server name
+    server: "azureuser", // Your SQL Server name
     database: "TestDB",                // Your SQL Database name
     options: {
         encrypt: true                  // For Azure SQL, use encrypt: true
