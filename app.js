@@ -6,30 +6,57 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const dbConfig = {
-    user: "sa",  					// Give your Database username
-    password: "YourStrongPassword123",				// Give your Database password
-    server: "azureuser.internal.cloudapp.net",	 // Give your SQL Server name
-    database: "TestDB",			// Give your SQL Database name
+    user: "sa",                       // Your Database username
+    password: "YourStrongPassword123", // Your Database password
+    server: "azureuser.internal.cloudapp.net", // Your SQL Server name
+    database: "TestDB",                // Your SQL Database name
     options: {
-        encrypt: true
+        encrypt: true                  // For Azure SQL, use encrypt: true
     }
 };
 
-sql.connect(dbConfig).then(pool => {
-    app.post("/submit", async (req, res) => {
-        const { name, email, contact } = req.body;
-        const query = `INSERT INTO Users (Name, Email, Contact) VALUES ('${name}', '${email}', '${contact}')`;
-        await pool.request().query(query);
+// SQL Server connection pool
+async function connectToDb() {
+    try {
+        const pool = await sql.connect(dbConfig);
+        return pool;
+    } catch (err) {
+        console.error("Database connection error:", err);
+        throw err;
+    }
+}
+
+// Handle form submission
+app.post("/submit", async (req, res) => {
+    const { name, email, contact } = req.body;
+
+    try {
+        const pool = await connectToDb();
+        
+        // Use parameterized query to avoid SQL injection
+        const query = `INSERT INTO Users (Name, Email, Contact) VALUES (@name, @email, @contact)`;
+
+        const request = pool.request();
+        request.input('name', sql.NVarChar, name);
+        request.input('email', sql.NVarChar, email);
+        request.input('contact', sql.NVarChar, contact);
+        
+        // Execute query
+        await request.query(query);
+
         res.send("Data saved successfully!");
-    });
-}).catch(err => {
-    console.error("Database connection error:", err);
+    } catch (err) {
+        console.error("Error inserting data:", err);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
+// Serve the HTML form
 app.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
 
-app.listen(8080, () => {				// Give the port on which you want your application to run
-    console.log("Server is running on port 8080");	// Give the port on which you want your application to run
+// Start the server
+app.listen(8080, () => {
+    console.log("Server is running on port 8080");
 });
